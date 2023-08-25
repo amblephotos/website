@@ -5,9 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"> <!-- Material Icons -->
     <title>Amble</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js"></script>
 </head>
 <body>
+    <div class="page-menu">
+        <div class="menu-item">
+            <a href="https://amble.photos/" target="_blank" rel="noopener noreferrer">
+                <i class="material-icons">home</i>
+            </a>
+        </div>
+        <div class="menu-item">
+            <i class="material-icons">search</i>
+        </div>
+        <div class="menu-item">
+            <a href="https://amble.photos/communities" target="_blank" rel="noopener noreferrer">
+                <i class="material-icons">groups</i>
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="https://amble.photos/upload" target="_blank" rel="noopener noreferrer">
+                <i class="material-icons">cloud_upload</i>
+            </a>
+        </div>
+        <div class="menu-item dark-light-toggle" onclick="toggleDarkLightMode()">
+            <i class="material-icons">dark_mode</i>
+        </div>
+    </div>
+    </div>
     <div class="error-container" id="errorContainer">
         <div class="error-box" id="errorBox"></div>
     </div>
@@ -15,7 +41,7 @@
         <img id="randomImage" src="" />
     </div>
     <div class="branding">
-        <span class="brand-text">Λ M B L E</span>
+        <span class="brand-text">&#923; M B L E</span>
     </div>
     <script src="script.js"></script>
 </body>

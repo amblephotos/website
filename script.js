@@ -1,6 +1,6 @@
 let currentImageIndex = -1;
 let isScrolling = false;
-let isImageLoaded = false; // Flag to track image loading
+let isImageLoaded = false;
 let scrollTimeout;
 
 function showError(message, type) {
@@ -13,60 +13,79 @@ function showError(message, type) {
     }, 5000);
 }
 
+function toggleDarkLightMode() {
+    const body = document.body;
+    body.classList.toggle('dark-mode');
+    body.classList.toggle('light-mode');
+
+    // Save the user's preference in a cookie
+    const isDarkMode = body.classList.contains('dark-mode');
+    Cookies.set('darkModePreference', isDarkMode);
+
+    // Change the icon of the toggle button based on the current mode
+    const modeIcon = document.querySelector('.dark-light-toggle i');
+    modeIcon.textContent = isDarkMode ? 'dark_mode' : 'light_mode'; // Use clear_day icon for light mode
+}
+
 function getRandomImage() {
     if (isImageLoaded) {
-        return; // Prevent loading multiple images for a single scroll
+        return;
     }
     
-    isImageLoaded = true; // Set the flag to true
+    isImageLoaded = true;
 
     const imageContainer = document.querySelector('.image-container');
 
     const loadingTimeout = setTimeout(() => {
         showError('Image taking longer than expected to load.', 'error');
-    }, 5000); // 5 seconds timeout
+    }, 5000);
 
     fetch('get_random_image.php')
         .then(response => response.json())
         .then(data => {
-            clearTimeout(loadingTimeout); // Clear the timeout since the image loaded
+            clearTimeout(loadingTimeout);
 
             if (data.error) {
                 showError(data.error, 'error');
             } else {
                 const newImage = document.createElement('img');
                 newImage.src = data.image;
-                newImage.style.transform = 'translateY(100%)';
+                newImage.style.opacity = 0;
 
                 newImage.onload = () => {
                     const currentImage = document.querySelector('.image-container img');
 
                     if (currentImage) {
-                        currentImage.style.transform = 'scale(98%)'; // Reduce size by 2%
+                        currentImage.style.opacity = 0;
+                        setTimeout(() => {
+                            currentImage.remove();
+                        }, 500);
                     }
 
-                    newImage.style.transform = 'translateY(0)';
-                    isImageLoaded = false; // Reset the flag
+                    newImage.style.opacity = 0;
+                    imageContainer.appendChild(newImage);
+                    
+                    setTimeout(() => {
+                        newImage.style.opacity = 1;
+                        isImageLoaded = false;
+                    }, 100);
                 };
-
-                imageContainer.innerHTML = ''; // Clear the container
-                imageContainer.appendChild(newImage);
             }
         })
         .catch(error => {
-            clearTimeout(loadingTimeout); // Clear the timeout in case of error
+            clearTimeout(loadingTimeout);
             showError('An error occurred while fetching the image.', 'error');
             console.error(error);
-            isImageLoaded = false; // Reset the flag in case of error
+            isImageLoaded = false;
         });
 }
 
-// Check if dark mode is preferred by the user
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
     document.body.classList.add('dark-mode');
+} else {
+    document.body.classList.add('light-mode'); // Default to light mode if not in dark mode
 }
 
-// Initial image load
 getRandomImage();
 
 document.addEventListener('keydown', event => {
@@ -84,5 +103,5 @@ document.addEventListener('wheel', event => {
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(() => {
         isScrolling = false;
-    }, 100); // Adjust the debounce time as needed
+    }, 100);
 });
